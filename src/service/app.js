@@ -10,14 +10,17 @@ export const getAll= async ()=>{
 }
 
 
-export const addTask = async (newTodo) => {
+export const addTask = async (title, description) => {
     try {
-        const response = await fetch(`http://localhost:3000/todo/create`, {
+        const response = await fetch("http://localhost:3000/todo/create", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newTodo)
+            body: JSON.stringify({ 
+                "title": title, 
+                "description":description 
+            })
         });
         const result = await response.json();
         console.log(result);
@@ -52,7 +55,7 @@ export const deleteTask = async (id) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedTodo)
+            body: JSON.stringify({ "title": title, "description":description })
         });
         const result = await response.json();
         console.log(result);
@@ -61,4 +64,23 @@ export const deleteTask = async (id) => {
         console.error(error);
     }
   };
+
+
+
+  export const checkItem = async (id, completed) => {
+    try {
+      const response = await fetch(`http://localhost:3000/todo/update/${id}` , {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ "completed": !completed }),
+      });
+      const result = await response.json();
+      console.log(result)
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   

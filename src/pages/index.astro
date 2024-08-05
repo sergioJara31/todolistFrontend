@@ -9,51 +9,59 @@ const data= await getAll()
 
 <Layout title="ToDo List">
 
-	<main class="container mx-auto p-4 " x-data={` {modelContent:'' ,showModal:false, data:${JSON.stringify(data)}}`} >
+	<main class="container mx-auto p-4 " x-data={` {modelContent:'' ,showModal:false, id:'', data:${JSON.stringify(data)}}`} >
 		<h1 class="text-4xl font-bold text-center mb-8">ToDoList</h1>
 		<div class="flex justify-center mb-6">
-			<input type="text" placeholder="Search tasks..." class="p-2 border rounded w-full max-w-lg border-slate-800">
 			<button class="bg-cyan-500 mx-10 p-2 rounded-full w-10"> <i class="fa-solid fa-plus"  @click="showModal = true; modelContent='Add New Task'"></i> </button>
 		</div> 
 		<template x-for="(item,index) in data": key=index>
 			<ul role="list" class="divide-y  divide-gray-100 p-5 flex justify-center  "  >
+				
 				<li class="flex justify-between gap-x-6 bg-slate-300 py-5 rounded-xl w-full max-w-4xl  ">
 				  <div class="flex min-w-0 gap-x-4">
+					<input
+						type="checkbox"
+						class="peer relative h-5 w-5 cursor-pointer mr-5 my-5 bg-white border-slate-950 ml-5 rounded-2xl
+						appearance-none border transition-all duration-300 checked:border-slate-950 checked:bg-blue-500 checked:before:bg-blue-500"
+						id="checkbox-8"
+						x-on:click="checkItem(item.id, item.completed)"
+						x-bind:checked="item.completed"     
+                	/>
 					<div class="min-w-0 flex-auto">
-					  <p class="text-sm font-semibold leading-6 text-gray-900 px-10" x-text="item.title"></p>
-					  <p class="mt-1 truncate text-xs leading-5 text-gray-500 px-10" x-text="item.description"></p>
+					  <p class="text-sm font-semibold leading-6 text-gray-900 pr-10 capitalize"  x-text="item.title"></p>
+					  <p class="mt-1 truncate text-xs leading-5 text-gray-500 pr-10 capitalize" x-text="item.description"></p>
 					</div>
 				  </div>
 				  <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-					<p class="text-sm leading-6  text-gray-900 px-10 py-5 showModal=True" @click="showModal = true;modelContent='Edit Task'">Edit</p>
+					<p class="text-sm leading-6  text-gray-900 px-10 py-5 showModal=True" @click="()=>{showModal = true; modelContent='Edit Task'; id=item.id}">Edit</p>
 				  </div>
 				</li>
 			  </ul>
 		</template>
 			  <div x-show="showModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
-				<div class="bg-white p-8 rounded shadow-lg w-1/2">
+				<div class="bg-white p-8 rounded shadow-lg w-1/2" x-data="{taskTitle:'',taskDescription=''}">
 					<p class="text-2xl font-bold mb-4" x-text="modelContent"></p>
-					<form @submit.prevent="showModal = false">
+					<form @submit.prevent="showModal = false" >
 						<div class="mb-4">
 							<label for="taskTitle" class="block text-sm font-bold mb-2 ">Title</label>
-							<input type="text" id="taskTitle" class="w-full p-2 border rounded border-slate-800">
+							<input type="text" id="taskTitle" class="w-full p-2 border rounded border-slate-800" x-model="taskTitle" >
 						</div>
 						<div class="mb-4"> 
 							<label for="taskDescription" class="block text-sm font-bold mb-2 ">Description</label>
-							<textarea id="taskDescription" class="w-full p-2 border rounded border-slate-800"></textarea>
+							<textarea id="taskDescription" class="w-full p-2 border rounded border-slate-800" x-model="taskDescription"></textarea>
 						</div>
 						<div class="flex justify-end">
 							<template x-if="modelContent === 'Edit Task'">
 								<div>
-									<button type="button" class="bg-red-600 text-white px-4 py-2 rounded mr-2"  @click= {`{showModal = false, ${deleteTask()}}`} >Delete</button>
+									<button type="button" class="bg-red-600 text-white px-4 py-2 rounded mr-2"  @click= {`{showModal = false}`} x-on:click="deleteTask(id)" >Delete</button>
 									<button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" @click="showModal = false">Cancel</button>
-									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false, ${updateTask()}}`}>Save</button>
+									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false, ${updateTask()}}`} >Save</button>
 								</div>	
 							</template>
 							<template x-if="modelContent === 'Add New Task'">
 								<div>
 									<button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" @click="showModal = false">Cancel</button>
-									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false, ${addTask(task)}}`}>Save</button>
+									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false}`} x-on:click="addTask(taskTitle,taskDescription)">Save</button>
 								</div>
 							</template>
 							
@@ -66,7 +74,20 @@ const data= await getAll()
 
 	<script>
 		
-		
+		import { checkItem,addTask,deleteTask, updateTask } from "../service/app"; 
+		const window: any = globalThis;
+
+		window.checkItem = (id, completed) => {
+			checkItem(id, completed);
+		}
+
+		window.addTask = (title,description) => {
+			addTask(title,description);
+		}
+
+		window.deleteTask=(id)=>{
+			deleteTask(id);
+		}
 		
 	</script>
 
