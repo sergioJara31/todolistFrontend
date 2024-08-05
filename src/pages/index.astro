@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 
-import { getAll } from "../service/app";
+import { getAll,deleteTask,updateTask,addTask } from "../service/app";
 
 const data= await getAll()
 ---
@@ -14,7 +14,7 @@ const data= await getAll()
 		<div class="flex justify-center mb-6">
 			<input type="text" placeholder="Search tasks..." class="p-2 border rounded w-full max-w-lg border-slate-800">
 			<button class="bg-cyan-500 mx-10 p-2 rounded-full w-10"> <i class="fa-solid fa-plus"  @click="showModal = true; modelContent='Add New Task'"></i> </button>
-		</div>
+		</div> 
 		<template x-for="(item,index) in data": key=index>
 			<ul role="list" class="divide-y  divide-gray-100 p-5 flex justify-center  "  >
 				<li class="flex justify-between gap-x-6 bg-slate-300 py-5 rounded-xl w-full max-w-4xl  ">
@@ -43,11 +43,22 @@ const data= await getAll()
 							<textarea id="taskDescription" class="w-full p-2 border rounded border-slate-800"></textarea>
 						</div>
 						<div class="flex justify-end">
-							<button type="button" class="bg-red-600 text-white px-4 py-2 rounded mr-2" >Delete</button>
-							<button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" @click="showModal = false">Cancel</button>
-							<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+							<template x-if="modelContent === 'Edit Task'">
+								<div>
+									<button type="button" class="bg-red-600 text-white px-4 py-2 rounded mr-2"  @click= {`{showModal = false, ${deleteTask()}}`} >Delete</button>
+									<button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" @click="showModal = false">Cancel</button>
+									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false, ${updateTask()}}`}>Save</button>
+								</div>	
+							</template>
+							<template x-if="modelContent === 'Add New Task'">
+								<div>
+									<button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" @click="showModal = false">Cancel</button>
+									<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" @click= {`{showModal = false, ${addTask(task)}}`}>Save</button>
+								</div>
+							</template>
+							
 						</div>
-					</form>
+					</form>  
 				</div>
 			</div>
 		

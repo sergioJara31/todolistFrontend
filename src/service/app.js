@@ -10,7 +10,7 @@ export const getAll= async ()=>{
 }
 
 
-export const addTodo = async (newTodo) => {
+export const addTask = async (newTodo) => {
     try {
         const response = await fetch(`http://localhost:3000/todo/create`, {
             method: 'POST',
